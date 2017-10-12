@@ -20,8 +20,10 @@ def tfidf(word, blob, bloblist):
 words_list = []
 stop = []
 bloblist = []
-uniquewords = []
 words_dict = {}
+splsym = ["-",",","!","#","%","^","&","*","(",")","!", ":",".","{","}", "[","]",">","<","?","/", "*","~", "@"]
+
+print(splsym)
 
 stop_words = open("Stop_words.txt").read()
 for line in stop_words:
@@ -30,12 +32,14 @@ for line in stop_words:
 
 stop_string = ''.join(stop)
 
-path = "hw2_train/train/spam/*.txt"
+path_to_spam = "hw2_train/train/spam/*.txt"
+path_to_ham = "hw2_train/train/ham/*.txt"
+
 for file in glob.glob(path):
 	file_words = codecs.open(file, "r", encoding='utf-8', errors='ignore' )
 	for line in file_words:
 		for word in line.split():
-			if not word in stop_string:
+			if not word in stop_string and not word in splsym:
 				words_list.append(word)
 	blob = tb(' '.join(words_list))
 	bloblist.append(blob)
