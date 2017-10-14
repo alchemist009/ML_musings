@@ -59,53 +59,55 @@ for file in glob.glob(path_to_ham):
 	words_list = []
 
 
-prior_spam_probability = (float)(len(spam_bloblist)) / (float)(len(spam_bloblist) + len(ham_bloblist))
-
-print(prior_spam_probability)
+prior_spam_probability = (len(spam_bloblist)) / (len(spam_bloblist) + len(ham_bloblist))
 
 prior_ham_probability = 1.0 - prior_spam_probability
 
-print(prior_ham_probability)
 
-spam_dict = {}
+
+
+
+
+# for i, blob in enumerate(bloblist):
+
+
+#print(ham_bloblist[3])
+
+# for i in words:
+# 	if not i in words_dict.keys():
+# 		count = blob.words.count(i)
+# 		words_dict[i] = count
+
+spam_tfidf_dict = {}
 
 for i, blob in enumerate(spam_bloblist):
-	for word in blob.words:
-		if word in spam_dict:
-			spam_dict[word] += 1
-		else:
-			spam_dict[word] = 1
+	#print("Top words in document {}".format(i+1))
+	scores = {word: tfidf(word, blob, spam_bloblist) for word in blob.words}
+	sorted_words = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+	for word, score in sorted_words[:]:
+	 	#print("\tWord: {}, TF-IDF: {}".format(word, round(score, 3)))
+	 	if word in spam_tfidf_dict:
+	 		spam_tfidf_dict[word] += round(score,3)
+	 	else:
+	 		spam_tfidf_dict[word] = round(score,3) 
 
-ham_dict = {}
+
+ham_tfidf_dict = {}
 
 for i, blob in enumerate(ham_bloblist):
-	for word in blob.words:
-		if word in ham_dict:
-			ham_dict[word] += 1
-		else:
-			ham_dict[word] = 1
+	print("Top words in document {}".format(i+1))
+	scores = {word: tfidf(word, blob, ham_bloblist) for word in blob.words}
+	sorted_words = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+	for word, score in sorted_words[:]:
+	 	print("\tWord: {}, TF-IDF: {}".format(word, round(score, 3)))
+	 	if word in ham_tfidf_dict:
+	 		ham_tfidf_dict[word] += round(score,3)
+	 	else:
+	 		ham_tfidf_dict[word] = round(score,3) 
 
 
 
-spam_total_word_count = 0
 
-for word in spam_dict:
-	spam_total_word_count += spam_dict[word]
-
-
-ham_total_word_count = 0
-
-for word in ham_dict:
-	ham_total_word_count += ham_dict[word]
-
-print(spam_total_word_count)
-print(len(spam_dict))
-
-spam_likelihood = {}
-
-for word in spam_dict:
-	if word in spam_dict:
-		spam_likelihood = (spam_dict[word] + 1.0) / (spam_total_word_count + len(spam_dict) + 1.0)
-		spam_l_likelihood = round(math.log(spam_likelihood), 3)
-		spam_likelihood[word] = spam_l_likelihood
-
+# for i in words_dict.keys():
+# # 	if words_dict[i] > 15:
+# 	print(i, words_dict[i])
